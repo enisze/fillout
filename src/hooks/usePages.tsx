@@ -1,4 +1,3 @@
-import { CheckCircle, FileText, Info } from "lucide-react";
 import { useState } from "react";
 
 export interface Page {
@@ -98,6 +97,13 @@ export function usePages(initialPages?: Page[]) {
 		}
 	};
 
+	const reorderPages = (fromIndex: number, toIndex: number) => {
+		const newPages = [...pages];
+		const [movedPage] = newPages.splice(fromIndex, 1);
+		newPages.splice(toIndex, 0, movedPage);
+		setPages(newPages);
+	};
+
 	const deletePage = (pageId: string) => {
 		setPages(pages.filter((p) => p.id !== pageId));
 		if (activePageId === pageId && pages.length > 1) {
@@ -126,16 +132,6 @@ export function usePages(initialPages?: Page[]) {
 		}
 	};
 
-	const getPageIcon = (index: number) => {
-		if (index === 0) {
-			return <Info className="w-5 h-5" />;
-		} else if (index === pages.length - 1) {
-			return <CheckCircle className="w-5 h-5" />;
-		} else {
-			return <FileText className="w-5 h-5" />;
-		}
-	};
-
 	return {
 		pages,
 		activePageId,
@@ -152,6 +148,6 @@ export function usePages(initialPages?: Page[]) {
 		copyPage,
 		duplicatePage,
 		deletePage,
-		getPageIcon,
+		reorderPages,
 	};
 }
