@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export interface Page {
 	id: string;
@@ -97,12 +97,15 @@ export function usePages(initialPages?: Page[]) {
 		}
 	};
 
-	const reorderPages = (fromIndex: number, toIndex: number) => {
-		const newPages = [...pages];
-		const [movedPage] = newPages.splice(fromIndex, 1);
-		newPages.splice(toIndex, 0, movedPage);
-		setPages(newPages);
-	};
+	const reorderPages = useCallback(
+		(fromIndex: number, toIndex: number) => {
+			const newPages = [...pages];
+			const [movedPage] = newPages.splice(fromIndex, 1);
+			newPages.splice(toIndex, 0, movedPage);
+			setPages(newPages);
+		},
+		[pages],
+	);
 
 	const deletePage = (pageId: string) => {
 		setPages(pages.filter((p) => p.id !== pageId));

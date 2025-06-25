@@ -6,7 +6,7 @@ import { PageDropdown } from "@/components/ui/PageDropdown";
 import { usePages } from "@/hooks/usePages";
 import { cn } from "@/lib/utils";
 import { CheckCircle, FileText, Info, Plus } from "lucide-react";
-import { type DragEvent, Fragment, useState } from "react";
+import { type DragEvent, Fragment, useCallback, useState } from "react";
 
 export default function PageNavigation() {
 	const {
@@ -57,25 +57,28 @@ export default function PageNavigation() {
 		setDropPosition(null);
 	};
 
-	const handleDrop = (e: DragEvent, dropIndex: number) => {
-		e.preventDefault();
-		if (draggedIndex !== null && draggedIndex !== dropIndex) {
-			// Calculate actual target index based on drop position
-			let targetIndex = dropIndex;
-			if (dropPosition === "after") {
-				targetIndex = dropIndex + 1;
-			}
-			// Adjust for the dragged item being removed
-			if (draggedIndex < targetIndex) {
-				targetIndex--;
-			}
+	const handleDrop = useCallback(
+		(e: DragEvent, dropIndex: number) => {
+			e.preventDefault();
+			if (draggedIndex !== null && draggedIndex !== dropIndex) {
+				// Calculate actual target index based on drop position
+				let targetIndex = dropIndex;
+				if (dropPosition === "after") {
+					targetIndex = dropIndex + 1;
+				}
+				// Adjust for the dragged item being removed
+				if (draggedIndex < targetIndex) {
+					targetIndex--;
+				}
 
-			reorderPages(draggedIndex, targetIndex);
-		}
-		setDraggedIndex(null);
-		setDragOverIndex(null);
-		setDropPosition(null);
-	};
+				reorderPages(draggedIndex, targetIndex);
+			}
+			setDraggedIndex(null);
+			setDragOverIndex(null);
+			setDropPosition(null);
+		},
+		[draggedIndex, dropPosition, reorderPages],
+	);
 
 	return (
 		<div className="bg-white px-4 py-2">
