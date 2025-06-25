@@ -8,30 +8,26 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-	Copy,
-	Edit,
-	FileText,
-	Flag,
-	MoreHorizontal,
-	Trash2,
-} from "lucide-react";
+import { Copy, Edit, FileText, Flag, MoreVertical, Trash2 } from "lucide-react";
 
 interface PageDropdownProps {
 	onAction: (action: string) => void;
+	children?: React.ReactNode;
 }
 
-export function PageDropdown({ onAction }: PageDropdownProps) {
+export function PageDropdown({ onAction, children }: PageDropdownProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button
-					variant="ghost"
-					size="icon"
-					className="w-6 h-6 p-0 ml-1 hover:bg-page-icon-hover/25 rounded focus-visible:ring-2 focus-visible:ring-page-focus-ring"
-				>
-					<MoreHorizontal className="w-3 h-3 text-page-dots-color" />
-				</Button>
+				{children || (
+					<Button
+						variant="ghost"
+						size="icon"
+						className="w-4 h-4 hover:bg-page-icon-hover/25 rounded focus-visible:ring-2 focus-visible:ring-page-focus-ring"
+					>
+						<MoreVertical className="w-3 h-3 text-page-dots-color" />
+					</Button>
+				)}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				align="start"
