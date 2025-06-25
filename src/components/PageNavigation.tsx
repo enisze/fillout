@@ -3,125 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageDropdown } from "@/components/ui/PageDropdown";
-import { CheckCircle, FileText, Info, Plus } from "lucide-react";
-import React, { useState } from "react";
-
-interface Page {
-	id: string;
-	name: string;
-	isActive?: boolean;
-}
+import { usePages } from "@/hooks/usePages";
+import { Plus } from "lucide-react";
+import React from "react";
 
 export default function PageNavigation() {
-	const [pages, setPages] = useState<Page[]>([
-		{
-			id: "info",
-			name: "Info",
-			isActive: true,
-		},
-		{ id: "details", name: "Details" },
-		{ id: "other", name: "Other" },
-		{ id: "ending", name: "Ending" },
-	]);
-
-	const [activePageId, setActivePageId] = useState("info");
-	const [renamingPageId, setRenamingPageId] = useState<string | null>(null);
-	const [tempName, setTempName] = useState("");
-
-	const getPageIcon = (index: number) => {
-		if (index === 0) {
-			return <Info className="w-5 h-5" />;
-		} else if (index === pages.length - 1) {
-			return <CheckCircle className="w-5 h-5" />;
-		} else {
-			return <FileText className="w-5 h-5" />;
-		}
-	};
-
-	const handleRenameSubmit = (pageId: string) => {
-		if (tempName.trim()) {
-			setPages(
-				pages.map((p) =>
-					p.id === pageId ? { ...p, name: tempName.trim() } : p,
-				),
-			);
-		}
-		setRenamingPageId(null);
-		setTempName("");
-	};
-
-	const handleRenameCancel = () => {
-		setRenamingPageId(null);
-		setTempName("");
-	};
-
-	const addNewPage = (afterIndex: number) => {
-		const newPage: Page = {
-			id: `page-${Date.now()}`,
-			name: "New Page",
-		};
-		const newPages = [...pages];
-		newPages.splice(afterIndex + 1, 0, newPage);
-		setPages(newPages);
-	};
-
-	const handlePageAction = (pageId: string, action: string) => {
-		switch (action) {
-			case "set-first": {
-				const pageToMove = pages.find((p) => p.id === pageId);
-				if (pageToMove) {
-					const otherPages = pages.filter((p) => p.id !== pageId);
-					setPages([pageToMove, ...otherPages]);
-				}
-				break;
-			}
-			case "rename": {
-				const pageToRename = pages.find((p) => p.id === pageId);
-				if (pageToRename) {
-					setRenamingPageId(pageId);
-					setTempName(pageToRename.name);
-				}
-				break;
-			}
-			case "copy": {
-				const pageToCopy = pages.find((p) => p.id === pageId);
-				if (pageToCopy) {
-					const newPage = {
-						...pageToCopy,
-						id: `${pageId}-copy-${Date.now()}`,
-						name: `${pageToCopy.name} Copy`,
-					};
-					const pageIndex = pages.findIndex((p) => p.id === pageId);
-					const newPages = [...pages];
-					newPages.splice(pageIndex + 1, 0, newPage);
-					setPages(newPages);
-				}
-				break;
-			}
-			case "duplicate": {
-				const pageToDuplicate = pages.find((p) => p.id === pageId);
-				if (pageToDuplicate) {
-					const newPage = {
-						...pageToDuplicate,
-						id: `${pageId}-duplicate-${Date.now()}`,
-						name: `${pageToDuplicate.name} Duplicate`,
-					};
-					const pageIndex = pages.findIndex((p) => p.id === pageId);
-					const newPages = [...pages];
-					newPages.splice(pageIndex + 1, 0, newPage);
-					setPages(newPages);
-				}
-				break;
-			}
-			case "delete":
-				setPages(pages.filter((p) => p.id !== pageId));
-				if (activePageId === pageId && pages.length > 1) {
-					const remainingPages = pages.filter((p) => p.id !== pageId);
-					setActivePageId(remainingPages[0].id);
-				}
-				break;
-		}
-	};
+	const {
+		pages,
+		activePageId,
+		renamingPageId,
+		tempName,
+		setActivePageId,
+		setTempName,
+		addNewPage,
+		handlePageAction,
+		handleRenameSubmit,
+		handleRenameCancel,
+		getPageIcon,
+	} = usePages();
 
 	return (
 		<div className="bg-white px-4 py-2">
